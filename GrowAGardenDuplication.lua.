@@ -1,0 +1,72 @@
+-- Создание GUI
+local ScreenGui = Instance.new("ScreenGui")
+local TextButton = Instance.new("TextButton")
+
+ScreenGui.Parent = game.CoreGui
+ScreenGui.Name = "GrowAGardenDuplication"
+
+TextButton.Parent = ScreenGui
+TextButton.Size = UDim2.new(0, 200, 0, 50)
+TextButton.Position = UDim2.new(0.5, -100, 0.8, 0)
+TextButton.Text = "Дюпнуть семена"
+TextButton.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+TextButton.TextColor3 = Color3.new(1, 1, 1)
+TextButton.Font = Enum.Font.SourceSansBold
+TextButton.TextSize = 24
+
+-- Список семян
+local seeds = {
+    "Carrot Seed",
+    "Strawberry Seed",
+    "Blueberry Seed",
+    "Orange Tulip",
+    "Tomato Seed",
+    "Corn Seed",
+    "Daffodil Seed",
+    "Watermelon Seed",
+    "Pumpkin Seed",
+    "Apple Seed",
+    "Bamboo Seed",
+    "Coconut Seed",
+    "Cactus Seed",
+    "Dragon Fruit Seed",
+    "Mango Seed",
+    "Grape Seed",
+    "Mushroom Seed"
+}
+
+local debounce = false
+
+TextButton.MouseButton1Click:Connect(function()
+    if debounce then return end
+    debounce = true
+
+    local success, err = pcall(function()
+        -- Поиск RemoteEvent
+        local Remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+        if Remotes then
+            local Inventory = Remotes:FindFirstChild("Inventory")
+            if Inventory then
+                local AddItem = Inventory:FindFirstChild("AddItem")
+                if AddItem and AddItem:IsA("RemoteEvent") then
+                    for _, seedName in pairs(seeds) do
+                        AddItem:FireServer(seedName, 1)
+                    end
+                else
+                    warn("AddItem RemoteEvent не найден.")
+                end
+            else
+                warn("Inventory не найден в Remotes.")
+            end
+        else
+            warn("Remotes не найден в ReplicatedStorage.")
+        end
+    end)
+
+    if not success then
+        warn("Ошибка при дюпе семян:", err)
+    end
+
+    wait(60)
+    debounce = false
+end)
